@@ -2,25 +2,63 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --surface: #f6f5f1;
+  --foreground: #111111;
+  --muted: #6b6b64;
+  --border: #e7e6e0;
+  --primary: #ddf20a;
+  --secondary: #00595b;
+  --on-primary: #111111;
+  --radius-panel: 16px;
+  --font-active: var(--font-geist);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-on-primary: var(--on-primary);
+  --font-sans: var(--font-active), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
 body {
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-active), ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
 }
+:focus-visible { outline: 2px solid var(--foreground); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-panel); }
+.panel-frost { background: color-mix(in srgb, var(--surface) 72%, transparent); }
+.chip {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--foreground);
+  border-radius: 999px;
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+.chip[aria-pressed="true"], .chip[aria-checked="true"] { background: #111; color: #fff; border-color: #111; }
+.chip:disabled { color: var(--muted); background: transparent; cursor: not-allowed; text-decoration: line-through; }
+.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-radius: 12px;
+  min-height: 48px;
+  font-size: 15px;
+  font-weight: 700;
+  width: 100%;
+}
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
