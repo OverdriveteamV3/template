@@ -15,14 +15,16 @@ export function AuthForm({
   submit,
   className,
   providers = false,
+  note,
 }: {
   title: string;
   action: (formData: FormData) => Promise<{ error?: string; ok?: boolean } | void>;
   next?: string;
-  fields: Array<"name" | "login" | "email" | "password">;
+  fields: Array<"name" | "login" | "email" | "phone" | "password">;
   submit: string;
   className?: string;
   providers?: boolean;
+  note?: string;
 }) {
   const t = useT();
   const [error, setError] = useState<string | null>(null);
@@ -38,6 +40,7 @@ export function AuthForm({
         {providers ? <LanguageToggle /> : null}
       </div>
       <h1 className="mt-3 text-3xl font-semibold tracking-tight">{title}</h1>
+      {note ? <p className="mt-2 text-sm text-muted">{note}</p> : null}
       {providers ? (
         <>
           <div className="mt-6"><ProviderButtons /></div>
@@ -50,14 +53,15 @@ export function AuthForm({
       ) : null}
       <div className={providers ? "mt-5 space-y-4" : "mt-6 space-y-4"}>
         {next ? <input type="hidden" name="next" value={next} /> : null}
-        {fields.includes("name") ? <label className="block text-sm font-medium">{t("common.name")}<input className={field} name="name" autoComplete="name" /></label> : null}
+        {fields.includes("name") ? <label className="block text-sm font-medium">{t("common.name")}<input className={field} name="name" autoComplete="name" required /></label> : null}
         {fields.includes("login") ? <label className="block text-sm font-medium">{t("auth.user")}<input className={field} name="email" type="text" autoComplete="username" required /></label> : null}
-        {fields.includes("email") ? <label className="block text-sm font-medium">{t("common.email")}<input className={field} name="email" type="email" autoComplete="email" required /></label> : null}
+        {fields.includes("email") ? <label className="block text-sm font-medium"><span className="flex items-baseline justify-between gap-3">{t("common.email")}<span className="text-xs font-normal text-muted">{t("auth.required")}</span></span><input className={field} name="email" type="email" autoComplete="email" required /></label> : null}
+        {fields.includes("phone") ? <label className="block text-sm font-medium">{t("common.phone")}<input className={field} name="phone" type="tel" autoComplete="tel" required /></label> : null}
         {fields.includes("password") ? (
           <label className="block text-sm font-medium">
             {t("common.password")}
             <span className="relative mt-1.5 block">
-              <input className={`${field} mt-0 pr-11`} name="password" type={showPassword ? "text" : "password"} autoComplete="current-password" minLength={8} required />
+              <input className={`${field} mt-0 pr-11`} name="password" type={showPassword ? "text" : "password"} autoComplete={fields.includes("login") ? "current-password" : "new-password"} minLength={8} required />
               <button type="button" className="absolute right-3 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center text-muted" aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")} aria-pressed={showPassword} onClick={() => setShowPassword((value) => !value)}>
                 {showPassword ? <EyeOffIcon /> : <EyeIcon />}
               </button>

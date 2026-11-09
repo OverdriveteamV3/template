@@ -1,9 +1,11 @@
+"use client";
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Clock, Mail, MapPin, Phone, type LucideIcon } from "lucide-react";
 import { PoweredBy } from "@/components/site/powered-by";
-import { translator } from "@/lib/i18n/server";
-import type { PublicSite } from "@/lib/site/types";
+import { useT } from "@/components/i18n/locale-provider";
+import { menuEntries, type PublicSite } from "@/lib/site/types";
 
 function SocialIcon({ label }: { label: string }) {
   const name = label.toLowerCase();
@@ -68,13 +70,18 @@ function FooterLine({ icon: Icon, children, muted = false }: { icon: LucideIcon;
   );
 }
 
-export async function SiteFooter({ site, year }: { site: PublicSite; year: string }) {
-  const t = await translator();
+export function SiteFooter({ site, year, preview = false }: { site: PublicSite; year: string; preview?: boolean }) {
+  const t = useT();
   const socials = site.contact.socials.filter((item) => item.href);
+  const menu = menuEntries(site.navigation, { services: site.navLabels.services || t("nav.services"), about: site.navLabels.about || t("nav.about"), contact: site.navLabels.contact || t("nav.contact"), appointments: site.navLabels.appointments || t("nav.appointments") });
   return (
     <footer className="mt-10 bg-[#111] text-white">
       <div className="mx-auto grid max-w-[1280px] gap-10 px-8 py-12 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(160px,220px)] md:items-start md:gap-x-16 md:px-14">
         <div>
+          {site.logoInFooter && site.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={site.logoUrl} alt={site.name} className="mb-3 h-8 max-w-[11rem] object-contain object-left" />
+          ) : null}
           <p className="text-lg font-semibold tracking-tight">{site.name}</p>
           {site.tagline ? <p className="mt-2 max-w-xs text-sm leading-relaxed text-white/70">{site.tagline}</p> : null}
           {socials.length > 0 ? (
@@ -99,9 +106,7 @@ export async function SiteFooter({ site, year }: { site: PublicSite; year: strin
           {site.contact.hours ? <FooterLine icon={Clock} muted>{site.contact.hours}</FooterLine> : null}
         </div>
         <nav className="flex flex-col gap-3 text-sm md:pl-6">
-          <Link href="/services" className="hover:text-white/70">{t("nav.services")}</Link>
-          <Link href="/about" className="hover:text-white/70">{t("nav.about")}</Link>
-          <Link href="/contact" className="hover:text-white/70">{t("nav.contact")}</Link>
+          {menu.map((item) => <Link key={item.id} href={preview ? `#${item.id}` : `/#${item.id}`} className="hover:text-white/70">{item.label}</Link>)}
         </nav>
       </div>
       <div className="border-t border-white/10 px-8 py-4 md:px-14 [&_a]:!text-white/70 [&_a]:decoration-white/25 [&_a:hover]:!text-primary [&_a:hover]:!decoration-primary [&_p]:!text-white/60">

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { MessageKey } from "@/lib/i18n/messages";
 import type { PublicSite, PublicStaff } from "@/lib/site/types";
 import { PageFrame, Stat } from "@/components/dashboard/page-frame";
@@ -111,7 +112,7 @@ export function NotificationBoard({ site, t }: { site: PublicSite; t: Translate 
 
 export function AppointmentBoard({ site, t }: { site: PublicSite; t: Translate }) {
   return (
-    <PageFrame eyebrow={site.category.toUpperCase()} title={t("dash.appointments")} note={t("dash.noLive")}>
+    <PageFrame eyebrow={site.category.toUpperCase()} title={t("dash.appointments")} note={t("dash.noLive")} action={<Link href="/dashboard/calendar" className="rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-on-primary">{t("dash.calendar")}</Link>}>
       <div data-dashboard-align className="grid gap-3 sm:grid-cols-4">
         {statuses.map((status) => (
           <article key={status} className="panel p-4">

@@ -11,5 +11,5 @@ export default async function Page({ params }: { params: Promise<{ customerId: s
   const { data } = await supabase.from("tenant_customers").select("id, full_name, email, phone").eq("id", customerId).eq("tenant_id", site.tenantId).maybeSingle();
   if (!data) notFound();
   const { data: appointments } = await supabase.from("appointments").select("id, starts_at, status").eq("customer_id", data.id).eq("tenant_id", site.tenantId);
-  return <section><h1 className="text-3xl font-semibold">{data.full_name}</h1><p className="text-sm">{data.email} {data.phone}</p><ul className="mt-4 text-sm">{(appointments ?? []).map((item) => <li key={item.id}>{new Date(item.starts_at).toLocaleString(locale)} · {item.status}</li>)}</ul></section>;
+  return <section><h2 className="text-xl font-semibold">{data.full_name}</h2><p className="text-sm">{data.email} {data.phone}</p><ul className="mt-4 text-sm">{(appointments ?? []).map((item) => <li key={item.id}>{new Date(item.starts_at).toLocaleString(locale)} · {item.status}</li>)}</ul></section>;
 }

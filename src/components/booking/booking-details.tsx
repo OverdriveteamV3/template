@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useLocale, useT } from "@/components/i18n/locale-provider";
 import { luxonLocale } from "@/lib/i18n/locale";
 import type { Slot } from "@/lib/availability/slots";
-import type { PublicStaff } from "@/lib/site/types";
+import type { PublicService, PublicStaff } from "@/lib/site/types";
 
 function timesFor(match: (hour: number) => boolean, slots: Slot[], taken: Slot[], staffId: string, timezone: string, clock: string) {
   const rows = new Map<string, boolean>();
@@ -34,50 +34,74 @@ const groups = [
 export function BookingDetails({
   date,
   timezone,
+  services,
+  serviceId,
   techs,
   slots,
   taken,
   initialStaff,
   initialStart,
+  onService,
   onClose,
   onConfirm,
 }: {
   date: string;
   timezone: string;
+  services: PublicService[];
+  serviceId: string;
   techs: PublicStaff[];
   slots: Slot[];
   taken: Slot[];
   initialStaff: string;
   initialStart: string;
+  onService: (id: string) => void;
   onClose: () => void;
-  onConfirm: (choice: { start: string; staff: string }) => void;
+  onConfirm: (choice: { start: string; staff: string; service: string }) => void;
 }) {
   const [staffId, setStaffId] = useState(initialStaff || "any");
   const [start, setStart] = useState(initialStart);
+  const activeStaff = techs.some((person) => person.id === staffId) ? staffId : "any";
   const t = useT();
   const clock = luxonLocale(useLocale());
   const [openGroups, setOpenGroups] = useState<string[]>([]);
   const when = DateTime.fromISO(date, { zone: timezone }).setLocale(clock);
-  const chosen = slots.some((slot) => slot.start === start && (staffId === "any" || slot.staffIds.includes(staffId))) ? start : "";
+  const chosen = slots.some((slot) => slot.start === start && (activeStaff === "any" || slot.staffIds.includes(activeStaff))) ? start : "";
   const grouped = groups
-    .map((group) => ({ ...group, times: timesFor(group.match, slots, taken, staffId, timezone, clock) }))
+    .map((group) => ({ ...group, times: timesFor(group.match, slots, taken, activeStaff, timezone, clock) }))
     .filter((group) => group.times.length > 0);
 
   return (
     <Dialog.Root open onOpenChange={(open) => { if (!open) onClose(); }}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[min(640px,calc(100vh-2rem))] w-[min(360px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-2xl bg-[#f6f5f1] p-4" aria-describedby={undefined}>
+        <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/40" />
+        <Dialog.Content className="fixed left-1/2 top-1/2 z-[100] max-h-[min(640px,calc(100vh-2rem))] w-[min(360px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-2xl bg-[#f6f5f1] p-4" aria-describedby={undefined}>
           <div className="flex items-start justify-between gap-3">
             <Dialog.Title className="text-[17px] font-semibold tracking-tight">{when.toFormat("cccc, LLLL d")}</Dialog.Title>
             <Dialog.Close className="rounded-full border border-[#e6e5df] px-3 py-1 text-sm">{t("common.close")}</Dialog.Close>
           </div>
+          <label className="mt-4 block text-sm" htmlFor="booking-service">
+            <span className="mb-1 block text-xs font-medium tracking-wide text-[#6b6b64]">{t("booking.selectService")}</span>
+            <select
+              id="booking-service"
+              className="w-full rounded-xl border border-[#e6e5df] bg-white px-3 py-2"
+              value={services.some((service) => service.id === serviceId) ? serviceId : ""}
+              onChange={(event) => {
+                onService(event.target.value);
+                setStart("");
+              }}
+            >
+              <option value="">{t("booking.selectService")}</option>
+              {services.map((service) => (
+                <option key={service.id} value={service.id}>{service.name}</option>
+              ))}
+            </select>
+          </label>
           <label className="mt-4 block text-sm" htmlFor="booking-technician">
             <span className="mb-1 block text-xs font-medium tracking-wide text-[#6b6b64]">{t("booking.technician")}</span>
             <select
               id="booking-technician"
               className="w-full rounded-xl border border-[#e6e5df] bg-white px-3 py-2"
-              value={techs.some((person) => person.id === staffId) ? staffId : "any"}
+              value={activeStaff}
               onChange={(event) => {
                 const nextStaff = event.target.value;
                 setStaffId(nextStaff);
@@ -139,7 +163,7 @@ export function BookingDetails({
             type="button"
             className="btn-primary mt-4"
             disabled={!chosen}
-            onClick={() => onConfirm({ start: chosen, staff: staffId })}
+            onClick={() => onConfirm({ start: chosen, staff: activeStaff, service: serviceId })}
           >
             {t("booking.done")}
           </button>

@@ -2,15 +2,19 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
+import { User } from "lucide-react";
 import { signOut } from "@/server/auth-actions";
 import { useT } from "@/components/i18n/locale-provider";
 
-export function ProfileMenu({ email, imageUrl, dashboard = false }: { email: string; imageUrl?: string; dashboard?: boolean }) {
+const item = "block px-3 py-2 hover:bg-surface";
+
+export function ProfileMenu({ email, imageUrl, dashboard = false }: { email?: string | null; imageUrl?: string; dashboard?: boolean }) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const menuId = useId();
-  const initial = (email.trim()[0] || "?").toUpperCase();
+  const signedIn = Boolean(email);
+  const initial = (email?.trim()[0] || "?").toUpperCase();
 
   useEffect(() => {
     if (!open) return;
@@ -36,32 +40,44 @@ export function ProfileMenu({ email, imageUrl, dashboard = false }: { email: str
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={menuId}
-        aria-label={email}
+        aria-label={email || t("nav.profile")}
         onClick={() => setOpen((value) => !value)}
       >
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={imageUrl} alt="" className="h-full w-full object-cover" />
-        ) : (
+        ) : signedIn ? (
           initial
+        ) : (
+          <User size={16} strokeWidth={2} aria-hidden />
         )}
       </button>
       {open ? (
         <div id={menuId} role="menu" className="absolute right-0 top-full z-30 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-white py-1 text-sm shadow-[0_16px_40px_rgba(17,17,17,0.08)]">
-          <p className="truncate px-3 py-2 text-xs text-muted">{email}</p>
-          {dashboard ? (
-            <Link href="/dashboard" role="menuitem" className="block px-3 py-2 hover:bg-surface" onClick={() => setOpen(false)}>
-              {t("nav.dashboard")}
-            </Link>
-          ) : null}
-          <Link href="/account" role="menuitem" className="block px-3 py-2 hover:bg-surface" onClick={() => setOpen(false)}>
-            {t("nav.account")}
-          </Link>
-          <form action={signOut}>
-            <button type="submit" role="menuitem" className="block w-full px-3 py-2 text-left hover:bg-surface">
-              {t("nav.signOut")}
-            </button>
-          </form>
+          {signedIn ? (
+            <>
+              <p className="truncate px-3 py-2 text-xs text-muted">{email}</p>
+              {dashboard ? (
+                <Link href="/dashboard" role="menuitem" className={item} onClick={() => setOpen(false)}>
+                  {t("nav.dashboard")}
+                </Link>
+              ) : null}
+              <form action={signOut}>
+                <button type="submit" role="menuitem" className={`w-full text-left ${item}`}>
+                  {t("nav.signOut")}
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Link href="/sign-in?next=%2F" role="menuitem" className={item} onClick={() => setOpen(false)}>
+                {t("nav.signIn")}
+              </Link>
+              <Link href="/register?next=%2F" role="menuitem" className={item} onClick={() => setOpen(false)}>
+                {t("auth.create")}
+              </Link>
+            </>
+          )}
         </div>
       ) : null}
     </div>

@@ -1,4 +1,5 @@
 import type { DateOverride, HoursWindow } from "@/lib/availability/slots";
+import type { FormField } from "@/lib/forms/validate";
 import type { ThemeTokens } from "@/lib/theme/tokens";
 
 export type PublicService = {
@@ -33,6 +34,14 @@ export type PublicPolicy = {
   effectiveOn: string | null;
 };
 
+export type BuiltInNav = "services" | "about" | "contact" | "appointments";
+export type CustomNavPage = { id: string; label: string; body: string; form?: FormField[] };
+export type SiteNavItem = BuiltInNav | CustomNavPage;
+
+export function menuEntries(navigation: SiteNavItem[], labels: Record<BuiltInNav, string>) {
+  return navigation.map((item) => typeof item === "string" ? { id: item, label: labels[item] } : { id: item.id, label: item.label });
+}
+
 export type PublicSite = {
   tenantId: string;
   slug: string;
@@ -44,6 +53,8 @@ export type PublicSite = {
   category: string;
   tagline: string;
   logoUrl: string;
+  logoInFooter: boolean;
+  maintenance: boolean;
   hero: {
     imageUrl: string;
     landingImageUrl: string;
@@ -53,13 +64,21 @@ export type PublicSite = {
     alt: string;
     focalX: number;
     focalY: number;
+    backgroundOpacity: number;
+    showCalendar: boolean;
+    showPortrait: boolean;
   };
   about: { body: string; companyBio: string; professionalBio: string; short: string; visible: boolean };
   contact: { email: string; phone: string; address: string; mapUrl: string; hours: string; socials: { label: string; href: string }[] };
+  contactForm: FormField[];
   facts: { label: string; value: string }[];
   sections: Array<"about" | "services" | "gallery" | "testimonials" | "faqs">;
+  navigation: SiteNavItem[];
+  navLabels: Record<BuiltInNav, string>;
   gallery: { src: string; alt: string }[];
-  testimonials: { quote: string; name: string; approved: boolean }[];
+  testimonials: { quote: string; name: string; approved: boolean; stars?: number; date?: string; url?: string; avatar?: string }[];
+  reviewSummary?: { rating: number; count: number; label: string };
+  reviewLinks: { google: string; yelp: string; facebook: string; other: string };
   faqs: { question: string; answer: string }[];
   services: PublicService[];
   staff: PublicStaff[];

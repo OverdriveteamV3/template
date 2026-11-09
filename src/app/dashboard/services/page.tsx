@@ -13,8 +13,7 @@ export default async function Page() {
   const { data } = await supabase.from("services").select("id, name, duration_minutes, active, archived_at").eq("tenant_id", site.tenantId).order("sort_order");
   return (
     <section>
-      <h1 className="text-3xl font-semibold">{t("dash.services")}</h1>
-      <ul className="mt-4 divide-y divide-border text-sm">
+      <ul className="divide-y divide-border text-sm">
         {(data ?? []).map((service) => (
           <li key={service.id} className="flex items-center justify-between py-2">
             <span>{service.name} · {service.duration_minutes} {t("dash.minShort")} {service.archived_at ? `· ${t("common.archived")}` : ""}</span>

@@ -16,7 +16,7 @@ export default async function Page({ params }: { params: Promise<{ appointmentId
   const { data: events } = await supabase.from("appointment_events").select("id, event_type, created_at, to_status").eq("appointment_id", data.id).order("created_at");
   return (
     <section>
-      <h1 className="text-3xl font-semibold">{data.status}</h1>
+      <h2 className="text-xl font-semibold">{data.status}</h2>
       <p className="mt-2 text-sm">{new Date(data.starts_at).toLocaleString(locale)} · {data.timezone} · {data.source}</p>
       {data.customer_note ? <p className="mt-2 text-sm">{data.customer_note}</p> : null}
       <form action={voidAction(setStatus)} className="mt-4 flex gap-2">

@@ -1,13 +1,10 @@
 import type { ReactNode } from "react";
 
-export function PageFrame({ eyebrow, title, note, children }: { eyebrow?: string; title: string; note?: string; children: ReactNode }) {
+export function PageFrame({ note, action, children }: { eyebrow?: string; title?: string; note?: string; action?: ReactNode; children: ReactNode }) {
   return (
     <section className="space-y-4">
-      <header>
-        {eyebrow ? <p className="text-[10px] font-semibold tracking-[0.18em] text-muted">{eyebrow}</p> : null}
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">{title}</h1>
-        {note ? <p className="mt-1 text-sm text-muted">{note}</p> : null}
-      </header>
+      {action}
+      {note ? <p className="text-sm text-muted">{note}</p> : null}
       {children}
     </section>
   );

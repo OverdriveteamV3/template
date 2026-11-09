@@ -1,3 +1,4 @@
+import { defaultContactFields } from "@/lib/forms/validate";
 import type { PublicSite } from "@/lib/site/types";
 import { referenceTheme, type ThemeTokens } from "@/lib/theme/tokens";
 
@@ -53,6 +54,8 @@ function site(input: { tenantId: string; slug: string; name: string; category: s
     category: input.category,
     tagline: input.tagline,
     logoUrl: "",
+    logoInFooter: false,
+    maintenance: false,
     hero: {
       imageUrl: "/portrait.jpg",
       landingImageUrl: "/hero-landing.jpg",
@@ -62,6 +65,9 @@ function site(input: { tenantId: string; slug: string; name: string; category: s
       alt: "",
       focalX: 50,
       focalY: 40,
+      backgroundOpacity: 25,
+      showCalendar: true,
+      showPortrait: true,
     },
     about: {
       visible: true,
@@ -82,13 +88,17 @@ function site(input: { tenantId: string; slug: string; name: string; category: s
         { label: "TikTok", href: "https://www.tiktok.com" },
       ],
     },
+    contactForm: defaultContactFields,
     facts: [
       { label: "Studio", value: "By appointment" },
       { label: "Languages", value: "English" },
     ],
     sections: ["about", "services", "testimonials"],
+    navigation: ["services", "about", "contact"],
+    navLabels: { services: "", about: "", contact: "", appointments: "" },
     gallery: [],
     testimonials: [],
+    reviewLinks: { google: "", yelp: "", facebook: "", other: "" },
     faqs: [{ question: "How do I change this text?", answer: "Publish a website version from the dashboard. Empty optional sections stay hidden." }],
     services: input.services,
     staff: [

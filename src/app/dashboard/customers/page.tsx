@@ -12,8 +12,7 @@ export default async function Page() {
   const { data } = await supabase.from("tenant_customers").select("id, full_name, email").eq("tenant_id", site.tenantId).order("created_at", { ascending: false });
   return (
     <section>
-      <h1 className="text-3xl font-semibold">{t("dash.customers")}</h1>
-      <ul className="mt-4 divide-y divide-border text-sm">{(data ?? []).length === 0 ? <li className="py-3 text-muted">{t("dash.noCustomers")}</li> : data?.map((person) => <li key={person.id} className="py-2"><Link href={`/dashboard/customers/${person.id}`}>{person.full_name}</Link> · {person.email}</li>)}</ul>
+      <ul className="divide-y divide-border text-sm">{(data ?? []).length === 0 ? <li className="py-3 text-muted">{t("dash.noCustomers")}</li> : data?.map((person) => <li key={person.id} className="py-2"><Link href={`/dashboard/customers/${person.id}`}>{person.full_name}</Link> · {person.email}</li>)}</ul>
     </section>
   );
 }

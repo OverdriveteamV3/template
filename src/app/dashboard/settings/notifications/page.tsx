@@ -1,6 +1,5 @@
 import { NotificationBoard } from "@/components/dashboard/section-boards";
-import { voidAction } from "@/lib/utils";
-import { saveNotifications } from "@/server/dashboard-actions";
+import { saveNotificationsForm } from "@/server/dashboard-actions";
 import { translator } from "@/lib/i18n/server";
 import { requireMember } from "@/server/guards";
 import { createClient } from "@/lib/supabase/server";
@@ -14,9 +13,8 @@ export default async function Page() {
   const { data: failed } = await supabase.from("notification_outbox").select("id, event_type, last_error, status").eq("tenant_id", site.tenantId).in("status", ["failed", "dead"]).limit(10);
   return (
     <section>
-      <h1 className="text-3xl font-semibold">{t("dash.notificationsTitle")}</h1>
-      <p className="mt-2 text-sm text-muted">{t("dash.notificationsHint")}</p>
-      <form action={voidAction(saveNotifications)} className="mt-4 grid gap-2 text-sm">
+      <p className="text-sm text-muted">{t("dash.notificationsHint")}</p>
+      <form action={saveNotificationsForm} className="mt-4 grid gap-2 text-sm">
         <input name="publicEmail" defaultValue={data?.public_contact_email ?? ""} placeholder={t("dash.publicEmail")} className="rounded-xl border border-border px-3 py-2" />
         <input name="replyTo" defaultValue={data?.reply_to ?? ""} placeholder={t("dash.replyTo")} className="rounded-xl border border-border px-3 py-2" />
         <input name="recipients" defaultValue={(data?.recipients ?? []).join(", ")} placeholder={t("dash.recipients")} className="rounded-xl border border-border px-3 py-2" />

@@ -1,9 +1,8 @@
 "use client";
 
-import { useT } from "@/components/i18n/locale-provider";
+import { LoadingScreen } from "@/components/i18n/loading-screen";
 import type { MessageKey } from "@/lib/i18n/messages";
 
-export function LoadingLine({ label = "common.loading" }: { label?: MessageKey }) {
-  const t = useT();
-  return <p className="p-8 text-sm">{t(label)}</p>;
+export function LoadingLine(_props: { label?: MessageKey } = {}) {
+  return <LoadingScreen />;
 }

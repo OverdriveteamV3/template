@@ -36,11 +36,40 @@ body {
   line-height: 1.5;
 }
 :focus-visible { outline: 2px solid var(--foreground); outline-offset: 2px; }
+@keyframes review-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.review-marquee { animation: review-marquee 55s linear infinite; }
+.review-row:hover .review-marquee,
+.review-row:focus-within .review-marquee { animation-play-state: paused; }
+
+@keyframes overdrive-logo {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 16px rgba(221, 242, 10, 0.45)); }
+  50% { transform: scale(1.045); filter: drop-shadow(0 0 28px rgba(56, 189, 248, 0.6)); }
+}
+@keyframes overdrive-dot {
+  0%, 80%, 100% { opacity: 0.15; }
+  40% { opacity: 1; }
+}
+.overdrive-logo { animation: overdrive-logo 1.8s ease-in-out infinite; }
+.overdrive-dot { animation: overdrive-dot 1.2s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .review-row { overflow-x: auto; }
 }
 .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-panel); }
-.panel-frost { background: color-mix(in srgb, var(--surface) 72%, transparent); }
+.panel-frost {
+  background: color-mix(in srgb, #ffffff 42%, transparent);
+  border-color: color-mix(in srgb, #ffffff 72%, transparent);
+  box-shadow: 0 18px 42px rgb(17 17 17 / 16%);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+}
+.panel-frost button.bg-white {
+  background-color: color-mix(in srgb, #ffffff 48%, transparent);
+}
 .chip {
   border: 1px solid var(--border);
   background: #fff;

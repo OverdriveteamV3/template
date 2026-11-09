@@ -44,7 +44,7 @@ $doc${
   "identity": {"name": "Northline Studio", "category": "Hair studio", "tagline": "Cuts, color, and calm appointments.", "logoUrl": "", "logoDarkUrl": "", "faviconUrl": ""},
   "hero": {"imageUrl": "", "profileUrl": "", "title": "Northline Studio", "subtitle": "Cuts, color, and calm appointments.", "cta": "Book an Appointment", "alt": "", "focalX": 50, "focalY": 40},
   "about": {"body": "This paragraph is placeholder copy for the fictional sample studio.", "companyBio": "Northline Studio is a fictional sample used to preview booking.", "professionalBio": "", "short": "Sample copy for the local demo. It is not a real business.", "visible": true},
-  "contact": {"email": "hello@example.com", "phone": "(212) 555-0100", "address": "100 Example Street, New York, NY", "mapUrl": "", "hours": "Tue–Fri, 9:00–5:00", "socials": []},
+  "contact": {"email": "hello@example.com", "phone": "(212) 555-0100", "address": "100 Example Street, New York, NY", "mapUrl": "", "hours": "Tue–Fri, 9:00–5:00", "socials": [{"label": "Instagram", "href": "https://instagram.com"}, {"label": "Facebook", "href": "https://facebook.com"}, {"label": "TikTok", "href": "https://www.tiktok.com"}]},
   "facts": [{"label": "Studio", "value": "By appointment"}, {"label": "Languages", "value": "English"}],
   "sections": ["about", "services", "faqs"],
   "gallery": [],

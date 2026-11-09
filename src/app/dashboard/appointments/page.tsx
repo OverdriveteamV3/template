@@ -17,8 +17,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ q
   const filtered = (data ?? []).filter((item) => !query.q || item.id.includes(query.q) || item.status.includes(query.q));
   return (
     <section>
-      <h1 className="text-3xl font-semibold">{t("dash.appointments")}</h1>
-      <form className="mt-4 flex gap-2 text-sm"><input name="q" defaultValue={query.q} placeholder={t("dash.search")} className="rounded-xl border border-border px-3 py-2" /><button className="rounded-xl border border-border px-3">{t("dash.searchButton")}</button></form>
+      <form className="flex items-center gap-2 text-sm">
+        <input name="q" defaultValue={query.q} placeholder={t("dash.search")} className="rounded-xl border border-border px-3 py-2" />
+        <button className="rounded-xl border border-border px-3 py-2">{t("dash.searchButton")}</button>
+        <Link href="/dashboard/calendar" className="rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-on-primary">{t("dash.calendar")}</Link>
+      </form>
       <ul className="mt-4 divide-y divide-border text-sm">
         {filtered.length === 0 ? <li className="py-3 text-muted">{t("dash.noMatch")}</li> : filtered.map((item) => <li key={item.id} className="py-2"><Link href={`/dashboard/appointments/${item.id}`}>{new Date(item.starts_at).toLocaleString(locale)} · {item.status}</Link></li>)}
       </ul>

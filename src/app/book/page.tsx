@@ -6,6 +6,7 @@ import { ConfirmForm } from "@/components/booking/confirm-form";
 import { LoadingLine } from "@/components/i18n/loading-line";
 import { getLocale, translator } from "@/lib/i18n/server";
 import { luxonLocale } from "@/lib/i18n/locale";
+import { MaintenancePage } from "@/components/site/maintenance-page";
 import { requireSite } from "@/server/guards";
 
 export default function Page({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -18,6 +19,7 @@ async function Book({ searchParams }: { searchParams: Promise<Record<string, str
   const query = await searchParams;
   await connection();
   const { site, viewer } = await requireSite();
+  if (site.maintenance) return <MaintenancePage name={site.name} category={site.category} logoUrl={site.logoUrl} />;
   const service = site.services.find((item) => item.id === query.service);
   const when = query.start ? DateTime.fromISO(query.start, { zone: "utc" }).setZone(site.timezone).setLocale(luxonLocale(locale)).toFormat("ccc, LLL d · h:mm a") : t("book.noTime");
   const returnTo = `/book?${new URLSearchParams(Object.entries(query).filter((entry): entry is [string, string] => Boolean(entry[1]))).toString()}`;

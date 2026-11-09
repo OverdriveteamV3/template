@@ -13,10 +13,6 @@ export function DashboardAside({ children }: { children: ReactNode }) {
 
     const align = () => {
       const current = parseFloat(aside.style.marginTop) || 0;
-      if (pathname !== "/dashboard") {
-        if (current) aside.style.marginTop = "";
-        return;
-      }
       const target = document.querySelector("[data-dashboard-align]");
       if (!target) {
         if (current) aside.style.marginTop = "";

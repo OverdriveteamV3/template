@@ -6,12 +6,12 @@ import { useT } from "@/components/i18n/locale-provider";
 import { BookingPanel } from "@/components/booking/booking-panel";
 import type { PublicSite } from "@/lib/site/types";
 
-export function BookingSheet({ site, today, label }: { site: PublicSite; today: string; label: string }) {
+export function BookingSheet({ site, today, label, preview = false }: { site: PublicSite; today: string; label: string; preview?: boolean }) {
   const t = useT();
   const [open, setOpen] = useState(false);
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger className="btn-primary w-full lg:hidden">{label}</Dialog.Trigger>
+      <Dialog.Trigger className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-on-primary">{label}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/30" />
         <Dialog.Content className="fixed inset-x-0 bottom-0 top-8 overflow-auto rounded-t-2xl bg-background p-4 shadow-none" aria-describedby={undefined}>
@@ -19,7 +19,7 @@ export function BookingSheet({ site, today, label }: { site: PublicSite; today: 
             <Dialog.Title className="text-base font-semibold">{t("booking.title")}</Dialog.Title>
             <Dialog.Close className="rounded-full border border-border px-3 py-1 text-sm">{t("common.close")}</Dialog.Close>
           </div>
-          <BookingPanel site={site} today={today} compact />
+          <BookingPanel site={site} today={today} compact preview={preview} />
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

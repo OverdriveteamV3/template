@@ -29,6 +29,12 @@ export function contrastRatio(foreground: string, background: string) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
+export function isDarkColor(hex: string) {
+  const value = normalizeHex(hex);
+  if (!value) return false;
+  return luminance(value) < 0.45;
+}
+
 export function readableForeground(background: string) {
   const white = contrastRatio("#ffffff", background);
   const ink = contrastRatio("#111111", background);

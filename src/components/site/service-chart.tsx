@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { BookingPanel } from "@/components/booking/booking-panel";
 import { useT } from "@/components/i18n/locale-provider";
 import { SectionTitle } from "@/components/site/section-title";
-import type { PublicService } from "@/lib/site/types";
+import type { PublicService, PublicSite } from "@/lib/site/types";
 
 const chartColors = ["var(--primary)", "#1f6b62", "#c6de45", "#d9d6cc"];
 
@@ -20,11 +21,12 @@ function serviceValue(service: PublicService) {
   return `${service.durationMinutes} min`;
 }
 
-export function ServiceChart({ services }: { services: PublicService[] }) {
+export function ServiceChart({ services, preview = false, title, site, today }: { services: PublicService[]; preview?: boolean; title?: string; site: PublicSite; today: string }) {
   const t = useT();
   const router = useRouter();
   const [selected, setSelected] = useState(0);
   const [hovered, setHovered] = useState<number | null>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const active = hovered ?? selected;
   const chosen = services[selected] ?? services[0];
   const shown = services[active] ?? chosen;
@@ -42,22 +44,32 @@ export function ServiceChart({ services }: { services: PublicService[] }) {
     return segment;
   });
 
+  useEffect(() => {
+    if (!calendarOpen) return;
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") setCalendarOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [calendarOpen]);
+
   function book() {
     if (!chosen) return;
-    const query = new URLSearchParams(window.location.search);
-    query.set("service", chosen.id);
-    query.delete("start");
-    query.delete("conflict");
-    router.replace(`/?${query.toString()}`, { scroll: false });
-    const wide = window.matchMedia("(min-width: 768px)").matches;
-    document.getElementById(wide ? "book" : "book-mobile")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (!preview) {
+      const query = new URLSearchParams(window.location.search);
+      query.set("service", chosen.id);
+      query.delete("start");
+      query.delete("conflict");
+      router.replace(`/?${query.toString()}`, { scroll: false });
+    }
+    setCalendarOpen(true);
   }
 
   if (!shown || !chosen) return null;
 
   return (
     <div>
-      <SectionTitle>{t("home.services")}</SectionTitle>
+      <SectionTitle>{title || t("home.services")}</SectionTitle>
       <div className="mt-8 flex flex-col items-center gap-10 lg:flex-row lg:items-center lg:gap-16">
         <div className="relative h-56 w-56 shrink-0">
           <svg viewBox="0 0 140 140" className="h-full w-full -rotate-90" aria-hidden>
@@ -72,7 +84,7 @@ export function ServiceChart({ services }: { services: PublicService[] }) {
             </div>
           </div>
         </div>
-        <ul className="w-full min-w-0 flex-1 space-y-2" onMouseLeave={() => setHovered(null)}>
+        <ul className="grid w-full min-w-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-2" onMouseLeave={() => setHovered(null)}>
           {services.map((service, index) => {
             const pressed = index === selected;
             const lit = index === active;
@@ -103,6 +115,16 @@ export function ServiceChart({ services }: { services: PublicService[] }) {
       <div className="mt-8 flex justify-end">
         <button type="button" className="btn-primary !h-10 !w-auto !min-h-0 px-6 text-sm" onClick={book}>{t("booking.book")}</button>
       </div>
+      {calendarOpen ? (
+        <div className="fixed inset-0 z-[80] grid place-items-center bg-foreground/50 p-4" onClick={() => setCalendarOpen(false)}>
+          <div role="dialog" aria-modal="true" aria-label={t("booking.title")} className="max-h-[85vh] w-full max-w-xl overflow-auto rounded-2xl bg-white p-5 shadow-xl" onClick={(event) => event.stopPropagation()}>
+            <div className="mb-3 flex justify-end">
+              <button type="button" autoFocus onClick={() => setCalendarOpen(false)} className="rounded-xl border border-border px-3 py-1.5 text-sm font-semibold">{t("common.close")}</button>
+            </div>
+            <BookingPanel site={site} today={today} preview={preview} serviceId={chosen.id} />
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

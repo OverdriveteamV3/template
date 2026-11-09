@@ -13,8 +13,7 @@ export default async function Page() {
   const { data } = await supabase.from("staff").select("id, display_name, active, archived_at").eq("tenant_id", site.tenantId);
   return (
     <section>
-      <h1 className="text-3xl font-semibold">{t("dash.staffHours")}</h1>
-      <ul className="mt-4 text-sm">{(data ?? []).map((person) => <li key={person.id}>{person.display_name}{person.archived_at ? ` · ${t("common.archived")}` : ""}</li>)}</ul>
+      <ul className="text-sm">{(data ?? []).map((person) => <li key={person.id}>{person.display_name}{person.archived_at ? ` · ${t("common.archived")}` : ""}</li>)}</ul>
       <form action={voidAction(saveStaff)} className="panel mt-6 grid gap-2 p-4 text-sm">
         <input name="name" required placeholder={t("common.name")} className="rounded-xl border border-border px-3 py-2" />
         <input name="email" type="email" placeholder={t("dash.emailOptional")} className="rounded-xl border border-border px-3 py-2" />

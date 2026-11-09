@@ -34,8 +34,7 @@ export default async function Page() {
   return (
     <section className="space-y-4">
       <div>
-        <h1 className="text-3xl font-semibold">{t("dash.policiesTitle")}</h1>
-        <p className="mt-2 text-sm text-muted">{t("dash.policiesHint")}</p>
+        <p className="text-sm text-muted">{t("dash.policiesHint")}</p>
         {editable ? null : <p className="mt-2 text-xs text-muted">{t("dash.policiesWait")}</p>}
       </div>
       {kinds.map(([kind, label]) => {

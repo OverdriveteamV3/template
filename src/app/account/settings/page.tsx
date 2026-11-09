@@ -1,8 +1,8 @@
 import { Suspense } from "react";
-import { AuthForm } from "@/components/auth/auth-form";
-import { updateProfile } from "@/server/auth-actions";
+import { redirect } from "next/navigation";
+import { AccountSettings } from "@/components/dashboard/account-settings";
 import { LoadingLine } from "@/components/i18n/loading-line";
-import { translator } from "@/lib/i18n/server";
+import { loadAccountProfile } from "@/server/account-profile";
 import { requireCustomer } from "@/server/guards";
 
 export default function Page() {
@@ -10,7 +10,13 @@ export default function Page() {
 }
 
 async function Settings() {
-  const t = await translator();
-  await requireCustomer();
-  return <main className="px-4"><AuthForm title={t("auth.profile")} action={updateProfile} fields={["name"]} submit={t("auth.saveProfile")} /></main>;
+  const { viewer } = await requireCustomer();
+  if (!viewer) redirect("/sign-in?next=/account");
+  if (viewer.role) redirect("/dashboard/settings");
+  const profile = await loadAccountProfile(viewer);
+  return (
+    <main className="mx-auto max-w-3xl px-4 py-10">
+      <AccountSettings {...profile} />
+    </main>
+  );
 }
